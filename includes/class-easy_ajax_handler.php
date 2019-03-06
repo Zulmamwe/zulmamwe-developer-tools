@@ -35,7 +35,7 @@ if( !class_exists( 'Easy_AJAX_Handler' ) ){
 					'access' => ( is_array($action) && isset($action['access']) ) ? $action['access'] : 'nopriv',
 					'handler' => $handler_key,
 					'callback' => ( is_array($action) && isset($action['callback']) ) ? $action['callback'] : $action_name
-				)
+				);
 			}
 			self::$allowed_ajax_actions = array_merge( self::$allowed_ajax_actions, $new_actions );
 			return $new_actions;
