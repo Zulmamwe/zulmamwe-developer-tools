@@ -18,9 +18,10 @@ if( !class_exists( 'Easy_AJAX_Handler' ) ){
 		}
 		
 		public static function prepare_variables( $actions, $handler ){
-			self::$handlers[] = $handler;
-			end(self::$handlers);
-			$handler_key = key(self::$handlers);
+			$handler_class_name = is_object( $handler ) ? get_class( $handler ) : $handler;
+			if( !isset( self::$handlers[ $handler_class_name ] ) ){
+				self::$handlers[ $handler_class_name ] = $handler;
+			}
 			
 			$new_actions = array();
 			if( !is_array($actions) ){
@@ -33,7 +34,7 @@ if( !class_exists( 'Easy_AJAX_Handler' ) ){
 				}
 				$new_actions[ $action_name ] = array(
 					'access' => ( is_array($action) && isset($action['access']) ) ? $action['access'] : 'nopriv',
-					'handler' => $handler_key,
+					'handler' => $handler_class_name,
 					'callback' => ( is_array($action) && isset($action['callback']) ) ? $action['callback'] : $action_name
 				);
 			}
@@ -49,8 +50,8 @@ if( !class_exists( 'Easy_AJAX_Handler' ) ){
 					throw new Exception( __( 'Unknown action.', 'zulmamwe' ) );
 				}
 				
-				$handler_key = self::$allowed_ajax_actions[ $action_name ]['handler'];
-				$handler = self::$handlers[ $handler_key ];
+				$handler_class_name = self::$allowed_ajax_actions[ $action_name ]['handler'];
+				$handler = self::$handlers[ $handler_class_name ];
 				$callback = self::$allowed_ajax_actions[ $action_name ]['callback'];
 				
 				$callable = is_object($handler) ? array( $handler, $callback ) : "{$handler}::{$callback}";
